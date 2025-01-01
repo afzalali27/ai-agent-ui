@@ -1,0 +1,42 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.4",
+    "axios": "^1.7.9",
+    "lodash": "^4.17.21",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-loader-spinner": "^6.1.6",
+    "react-speech-recognition": "^3.10.0",
+    "react-toastify": "^11.0.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.25.9",
+    "@eslint/js": "^9.17.0",
+    "@types/lodash": "^4.17.13",
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/react-speech-recognition": "^3.9.5",
+    "@types/react-toastify": "^4.1.0",
+    "@types/regenerator-runtime": "^0.13.8",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "regenerator-runtime": "^0.14.1",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5"
+  }
+}

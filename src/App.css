@@ -1,0 +1,177 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* voice agent styles */
+
+.app-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.agent-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.input-section,
+.voice-section,
+.transcript-section,
+.response-section {
+  margin-bottom: 20px;
+}
+
+.text-input,
+.transcript-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit-button,
+.mic-button {
+  margin-top: 10px;
+  padding: 20px 30px;
+  border: none;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.submit-button:disabled,
+.mic-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.stop-audio-button {
+  padding: 20px;
+  width: 120px;
+  background-color: #ff5c5c;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  animation: fade-in 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.stop-audio-button.audio-playing {
+  animation: pulse 1.5s infinite;
+}
+
+.stop-audio-button:hover {
+  background-color: #ff3b3b;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    transform: scale(1.05);
+  }
+
+  100% {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    transform: scale(1);
+  }
+}
+
+.mic-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin: 10px auto;
+}
+
+.mic-container.listening {
+  background-color: #f3f3f3;
+  border-radius: 50%;
+}
+
+.pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 123, 255, 0.4);
+  border-radius: 50%;
+  animation: pulse-animation 1.5s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
