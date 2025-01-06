@@ -8,11 +8,13 @@ import TextResponse from "./components/TextResponse";
 import { playAudio, stopAudioPlayback } from "./helpers";
 import type { InputMethod } from "./components/InputMethodSelection";
 import InputMethodSelection from "./components/InputMethodSelection";
+import { useLocalStorage } from "./hooks";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 const AIChatAgent: React.FC = () => {
   const [inputMethod, setInputMethod] = useState<InputMethod | null>(null);
+  const [sessionId] = useLocalStorage('sessionId', crypto.randomUUID())
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -20,7 +22,11 @@ const AIChatAgent: React.FC = () => {
   const handleApiRequest = async (input: string) => {
     setLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/process-input?text_input=${encodeURIComponent(input)}`);
+      const res = await axios.post(`${API_URL}/process-input?text_input=${encodeURIComponent(input)}`, undefined, {
+        headers: {
+          'X-Session-ID': sessionId
+        }
+      });
       if (res.data && res.data.response) {
         handleSuccess(res.data.response);
       } else {
