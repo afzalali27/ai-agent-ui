@@ -1,50 +1,95 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+// Based on https://github.com/juliencrn/usehooks-ts/blob/master/lib/src/useLocalStorage/useLocalStorage.ts
 
-type SetValue<T> = Dispatch<SetStateAction<T>>;
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { useLiveRef } from './useLiveRef'
 
-export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
-  // Read local storage value or fall back to the initial value
-  const readValue = useCallback((): T => {
-    if (typeof window === 'undefined') {
-      return initialValue;
-    }
+type SetValue<T> = Dispatch<SetStateAction<T>>
 
-    try {
-      const item = localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
-    } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
-    }
-  }, [key, initialValue]);
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T,
+): [T, SetValue<T>] {
+  const readValue = () => readLocalStorageItem(key, initialValue)
 
-  // State to store the current value
-  const [storedValue, setStoredValue] = useState<T>(readValue);
+  // State to store our value
+  // Pass initial state function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = useState<T>(readValue)
+  const storedValueRef = useLiveRef(storedValue)
 
-  // Save value to state and local storage
+  // Return a wrapped version of useState's setter function that ...
+  // ... persists the new value to localStorage.
   const setValue: SetValue<T> = useCallback(
     (value) => {
+      // Prevent build error "window is undefined" but keeps working
+      if (typeof window === 'undefined') {
+        console.warn(
+          `Tried setting localStorage key “${key}” even though environment is not a client`,
+        )
+      }
+
       try {
-        const newValue = value instanceof Function ? value(storedValue) : value;
+        // Allow value to be a function so we have the same API as useState
+        const newValue =
+          value instanceof Function ? value(storedValueRef.current) : value
 
         if (newValue == null) {
-          localStorage.removeItem(key);
+          localStorage.removeItem(key)
         } else {
-          localStorage.setItem(key, JSON.stringify(newValue));
+          localStorage.setItem(key, JSON.stringify(newValue))
         }
 
-        setStoredValue(newValue);
+        // Save state
+        setStoredValue(newValue)
+
+        // We dispatch a custom event so every useLocalStorage hook are notified
+        window.dispatchEvent(new StorageEvent('local-storage', { key }))
       } catch (error) {
-        console.warn(`Error setting localStorage key "${key}":`, error);
+        console.warn(`Error setting localStorage key “${key}”:`, error)
       }
     },
-    [key, storedValue]
-  );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [key],
+  )
 
-  // Sync state with local storage on key or initial value change
   useEffect(() => {
-    setStoredValue(readValue());
-  }, [readValue]);
+    setStoredValue(readValue())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  return [storedValue, setValue];
+  return useMemo(() => [storedValue, setValue], [setValue, storedValue])
+}
+
+// MARK: – Helpers
+
+// Get from local storage then
+// parse stored json or return initialValue
+export function readLocalStorageItem<T>(key: string, defaultValue: T): T {
+  if (typeof window === 'undefined') {
+    return defaultValue
+  }
+
+  try {
+    const item = localStorage.getItem(key)
+    return item ? (parseJSON(item) as T) : defaultValue
+  } catch (error) {
+    console.warn(`Error reading localStorage key “${key}”:`, error)
+    return defaultValue
+  }
+}
+
+// A wrapper for "JSON.parse()"" to support "undefined" value
+function parseJSON<T>(value: string | null): T | undefined {
+  try {
+    return value === 'undefined' ? undefined : JSON.parse(value ?? '')
+  } catch {
+    console.warn('parsing error on', { value })
+    return undefined
+  }
 }
